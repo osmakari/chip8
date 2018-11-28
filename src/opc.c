@@ -18,11 +18,11 @@
 int opcode_process () {
     uint16_t opcode = memory[program_counter] << 8 | memory[program_counter + 1];
     
-    //move(0, 0);
-    //printw("COMMAND: 0x%x 0x%x  ", (uint8_t)(opcode >> 8), (uint8_t)(opcode));
-    //move(1, 0);
-    //printw("ADDR: 0x%x%x  ", (uint8_t)(program_counter >> 8), (uint8_t)(program_counter));
-    //refresh();
+    move(0, 0);
+    printw("COMMAND: 0x%x 0x%x  ", (uint8_t)(opcode >> 8), (uint8_t)(opcode));
+    move(1, 0);
+    printw("STACKD: %i ", stack_depth);
+    refresh();
     
     switch(opcode >> 12) {
         case 0:
@@ -54,7 +54,7 @@ int opcode_process () {
             stack_depth++;
 
             // Save current program position to the stack
-            stack[stack_depth] = program_counter + 1;
+            stack[stack_depth] = program_counter + 2;
 
             // Go to subroutine
             program_counter = (opcode & 0xFFF) - 2;

@@ -27,7 +27,10 @@ int disp_draw (uint8_t x, uint8_t y, uint8_t height) {
                 // COLLISION
                 registers[0xF] = 1;
             }
-            printw("%c", c);
+            if(c == '|') {
+                printw("%c", c);
+
+            }
         }
     }
     refresh(); // TODO: Optimize
