@@ -2,6 +2,8 @@
 #include "mem.h"
 #include "disp.h"
 #include "keys.h"
+#include <math.h>
+#include <stdio.h>
 /*
     Return list:
         0x01: RETURN
@@ -21,7 +23,7 @@ int opcode_process () {
     move(0, 0);
     printw("COMMAND: 0x%x 0x%x  ", (uint8_t)(opcode >> 8), (uint8_t)(opcode));
     move(1, 0);
-    printw("STACKD: %i ", stack_depth);
+    printw("TIMER: %i ", delay_timer);
     refresh();
     
     switch(opcode >> 12) {
@@ -90,7 +92,6 @@ int opcode_process () {
             // R1 EQUALS R2
             uint8_t r1 = (opcode >> 8) & 0x0F; // register address
             uint8_t r2 = (opcode >> 4) & 0x0F;
-            r2 = r2 >> 4;
             
             if(registers[r1] == registers[r2]) {
                 program_counter += 2;
@@ -124,7 +125,6 @@ int opcode_process () {
                     // SET R1 TO R2
                     uint8_t r1 = (opcode >> 8) & 0x0F; // register address
                     uint8_t r2 = (opcode >> 4) & 0x0F;
-                    r2 = r2 >> 4;
 
                     registers[r1] = registers[r2];
                     break;
@@ -134,7 +134,6 @@ int opcode_process () {
                     // R1 = R1 | R2
                     uint8_t r1 = (opcode >> 8) & 0x0F; // register address
                     uint8_t r2 = (opcode >> 4) & 0x0F;
-                    r2 = r2 >> 4;
 
                     registers[r1] = registers[r1] | registers[r2];
                     break;
@@ -144,7 +143,6 @@ int opcode_process () {
                     // R1 = R1 & R2
                     uint8_t r1 = (opcode >> 8) & 0x0F; // register address
                     uint8_t r2 = (opcode >> 4) & 0x0F;
-                    r2 = r2 >> 4;
 
                     registers[r1] = registers[r1] & registers[r2];
                     break;
@@ -154,7 +152,6 @@ int opcode_process () {
                     // R1 = R1 ^ R2
                     uint8_t r1 = (opcode >> 8) & 0x0F; // register address
                     uint8_t r2 = (opcode >> 4) & 0x0F;
-                    r2 = r2 >> 4;
 
                     registers[r1] = registers[r1] ^ registers[r2];
                     break;
@@ -164,7 +161,6 @@ int opcode_process () {
                     // R1 = R1 + R2
                     uint8_t r1 = (opcode >> 8) & 0x0F; // register address
                     uint8_t r2 = (opcode >> 4) & 0x0F;
-                    r2 = r2 >> 4;
                     // Carry
                     if((uint16_t)registers[r1] + (uint16_t)registers[r2] > 0xFF) {
                         registers[0xF] = 1;
@@ -180,7 +176,6 @@ int opcode_process () {
                     // R1 = R1 + R2
                     uint8_t r1 = (opcode >> 8) & 0x0F; // register address
                     uint8_t r2 = (opcode >> 4) & 0x0F;
-                    r2 = r2 >> 4;
                     // Borrow
                     if(registers[r1] < registers[r2]) {
                         registers[0xF] = 0;
@@ -196,7 +191,6 @@ int opcode_process () {
                     // R1 = R1 >> 1, F = lsb
                     uint8_t r1 = (opcode >> 8) & 0x0F; // register address
                     uint8_t r2 = (opcode >> 4) & 0x0F;
-                    r2 = r2 >> 4;
                     registers[0xF] = registers[r2] & 0x01;
                     registers[r2] = registers[r2] >> 1;
                     registers[r1] = registers[r2];
@@ -207,7 +201,6 @@ int opcode_process () {
                     // R1 = R1 - R2
                     uint8_t r1 = (opcode >> 8) & 0x0F; // register address
                     uint8_t r2 = (opcode >> 4) & 0x0F;
-                    r2 = r2 >> 4;
                     if(registers[r2] < registers[r1]) {
                         registers[0xF] = 0;
                     }
@@ -223,7 +216,6 @@ int opcode_process () {
                     // R1 = R1 << 1, F = msb
                     uint8_t r1 = (opcode >> 8) & 0x0F; // register address
                     uint8_t r2 = (opcode >> 4) & 0x0F;
-                    r2 = r2 >> 4;
                     registers[0xF] = (registers[r2] >> 7) & 0x01;
                     registers[r2] = registers[r2] << 1;
                     registers[r1] = registers[r2];
@@ -236,10 +228,9 @@ int opcode_process () {
         }
         case 0x9:
         {
-            // R1 EQUALS R2
+            // R1 DOES NOT EQUAL R2
             uint8_t r1 = (opcode >> 8) & 0x0F; // register address
             uint8_t r2 = (opcode >> 4) & 0x0F;
-            r2 = r2 >> 4;
             
             if(registers[r1] != registers[r2]) {
                 program_counter += 2;
@@ -341,7 +332,10 @@ int opcode_process () {
                 }
                 case 0x33:
                 {
-                    // TODO:
+                    uint8_t r1 = (opcode >> 8) & 0x0F;
+                    memory[memory_address] = (uint8_t)floor(registers[r1]/100);
+                    memory[memory_address + 1] = (uint8_t)((int)floor(registers[r1]/10) % 10);
+                    memory[memory_address + 2] = (uint8_t)((registers[r1] % 100) % 10);
                     break;
                 }
                 case 0x55:

@@ -35,6 +35,7 @@ uint8_t memory[0x1000] = {
 
 };
 
+
 int memory_intialize () {
 
     return 0;

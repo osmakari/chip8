@@ -13,7 +13,7 @@ int disp_initialize () {
 
 int disp_clear () {
     clear();
-
+    refresh();
     return 0;
 }
 
@@ -22,15 +22,21 @@ int disp_draw (uint8_t x, uint8_t y, uint8_t height) {
     for(int _y = 0; _y < height; _y++) {
         for(int _x = 0; _x < 8; _x++) {
             move(y + _y, x + _x);
-            char c = ((memory[memory_address + _y] >> (8 - _x)) & 0x01) ? '|' : ' ';
-            if(inch() == '|' && c == '|') {
-                // COLLISION
-                registers[0xF] = 1;
+            char c = ((memory[memory_address + _y] >> (8 - _x)) & 0x01) ? '.' : ' ';
+            char g = ' ';
+            if(c == '.') {
+                if(inch() == '.') {
+                    
+                    registers[0xF] = 1;
+                    g = ' ';
+                }
+                else {
+                    g = '.';
+                }
             }
-            if(c == '|') {
-                printw("%c", c);
-
-            }
+            //if(c == '|') {
+            printw("%c", g);
+            //}
         }
     }
     refresh(); // TODO: Optimize
