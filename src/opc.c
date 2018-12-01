@@ -19,13 +19,13 @@
 
 int opcode_process () {
     uint16_t opcode = memory[program_counter] << 8 | memory[program_counter + 1];
-    
+    /*
     move(0, 0);
     printw("COMMAND: 0x%x 0x%x  ", (uint8_t)(opcode >> 8), (uint8_t)(opcode));
     move(1, 0);
     printw("TIMER: %i ", delay_timer);
     refresh();
-    
+    */
     switch(opcode >> 12) {
         case 0:
         {

@@ -1,0 +1,27 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="chip8.js"></script>
+    <title>Chip8</title>
+    <style>
+        #c8canvas {
+            width: 60%;
+        }
+    </style>
+    <script>
+        window.onload = function () {
+            init();
+        };
+        function loadgame () {
+            getFile(document.getElementById("file").value);
+        }
+    </script>
+</head>
+<body>
+    <canvas id='c8canvas'></canvas>
+    <input type='text' id='file' />
+    <button onclick="javascript:loadgame()">Load game</button>
+</body>
+</html>

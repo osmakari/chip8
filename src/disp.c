@@ -33,10 +33,8 @@ int disp_draw (uint8_t x, uint8_t y, uint8_t height) {
                 else {
                     g = '.';
                 }
+                printw("%c", g);
             }
-            //if(c == '|') {
-            printw("%c", g);
-            //}
         }
     }
     refresh(); // TODO: Optimize
